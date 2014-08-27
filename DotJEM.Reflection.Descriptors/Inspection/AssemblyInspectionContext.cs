@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using DotJEM.Reflection.Descriptors.Cache;
 using DotJEM.Reflection.Descriptors.Descriptors;
+using DotJEM.Reflection.Descriptors.Descriptors.Loading;
 
 namespace DotJEM.Reflection.Descriptors.Inspection
 {
@@ -47,11 +48,11 @@ namespace DotJEM.Reflection.Descriptors.Inspection
         internal AssemblyInspectionContext(string workingDirectory, bool shadowCopy, DescriptorCache cache)
         {
             domain = new InspectionDomain(workingDirectory, shadowCopy);
+            loadInfo = new DescriptorLoadInfo(workingDirectory, shadowCopy);
 
             AddDependencyLocation(Environment.CurrentDirectory);
             AddDependencyLocation(workingDirectory);
 
-            loadInfo = new DescriptorLoadInfo(workingDirectory, shadowCopy);
             cache.Context = this;
 
             loader = domain.Create<AssemblyLoader>();

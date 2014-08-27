@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DotJEM.Reflection.Descriptors.Descriptors;
+using DotJEM.Reflection.Descriptors.Descriptors.Loading;
 using DotJEM.Reflection.Descriptors.Inspection;
 
 namespace DotJEM.Reflection.Descriptors.Cache
@@ -48,8 +49,8 @@ namespace DotJEM.Reflection.Descriptors.Cache
                    return descriptor;
                 }
             }
-
-            descriptor = Context.Loader.Load(url);
+            object value = Context.Loader.Load(url);
+            descriptor = (Descriptor) value;
             descriptor.LoadInfo = loadInfo;
             descriptor.Cache = this;
             return descriptor;

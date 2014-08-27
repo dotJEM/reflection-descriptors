@@ -1,15 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection;
 using DotJEM.Reflection.Descriptors;
 using DotJEM.Reflection.Descriptors.Descriptors;
 using DotJEM.Reflection.Descriptors.Inspection;
-using Jeme.Reflection.Descriptors;
-using Jeme.Reflection.Descriptors.Impl;
-using Jeme.Reflection.Extentions;
 using Jeme.Reflection.Test.Constraints;
 using NUnit.Framework;
 
@@ -42,7 +35,7 @@ namespace Jeme.Reflection.Test
 
                 TypeDescriptor[] types = descriptor.Types;
 
-                TypeDescriptor[] implements = types.Where(td => td.IsSubclassOf(typeof(List).ToDescriptor())).ToArray();
+                TypeDescriptor[] implements = types.Where(td => td.IsSubclassOf(typeof(List))).ToArray();
 
                 TypeDescriptor class1 = types.Single(t => t.Name == "Class1");
 
@@ -59,18 +52,18 @@ namespace Jeme.Reflection.Test
         {
             using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
             {
-                AssemblyDescriptor descriptor = context.LoadAssemblyDescriptor("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
 
                 //Note: Descriptor Asserts on AssemblyDescriptors should always check that the parrent assembly is the correct one.
                 //Assert.That(descriptor, Does.Contain.TypeDescriptors(TD.Named("TestData.Class1"), TD.Named("TestData.Class1")));
 
-                ITypeDescriptor[] types = descriptor.GetTypes();
+                TypeDescriptor[] types = descriptor.Types;
 
-                ITypeDescriptor class1 = types.Single(t => t.Name == "Class1");
+                TypeDescriptor class1 = types.Single(t => t.Name == "Class1");
                 Assert.That(class1.Assembly, Is.SameAs(descriptor));
                 Assert.That(class1.FullName, Is.EqualTo("TestData.Class1"));
 
-                ITypeDescriptor class2 = types.Single(t => t.Name == "Class2");
+                TypeDescriptor class2 = types.Single(t => t.Name == "Class2");
                 Assert.That(class2.Assembly, Is.SameAs(descriptor));
                 Assert.That(class2.FullName, Is.EqualTo("TestData.Class2"));
             }
@@ -82,16 +75,16 @@ namespace Jeme.Reflection.Test
         {
             using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
             {
-                AssemblyDescriptor descriptor = context.LoadAssemblyDescriptor("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
 
-                ITypeDescriptor[] types = descriptor.GetTypes();
+                TypeDescriptor[] types = descriptor.Types;
 
-                ITypeDescriptor class1 = types.Single(t => t.Name == "Class1");
+                TypeDescriptor class1 = types.Single(t => t.Name == "Class1");
                 dynamic category1 = class1.GetCustomAttributes(true).FirstOrDefault();
 
                 Assert.That(category1.Category, Is.EqualTo("Category Class 1"));
 
-                ITypeDescriptor class2 = types.Single(t => t.Name == "Class2");
+                TypeDescriptor class2 = types.Single(t => t.Name == "Class2");
                 dynamic category2 = class2.GetCustomAttributes(true).FirstOrDefault();
                 
                 Assert.That(category2.Category, Is.EqualTo("Category Class 2"));
@@ -104,18 +97,18 @@ namespace Jeme.Reflection.Test
         {
             using (IAssemblyInspectionContext context = new AssemblyInspectionContext("Data\\"))
             {
-                AssemblyDescriptor descriptor = context.LoadAssemblyDescriptor("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
 
-                ITypeDescriptor[] types = descriptor.GetTypes();
-              
-                ITypeDescriptor class1 = types.Single(t => t.Name == "Class1");
-                IPropertyDescriptor property1 = class1.Properties.First();
+                TypeDescriptor[] types = descriptor.Types;
+  
+                TypeDescriptor class1 = types.Single(t => t.Name == "Class1");
+                PropertyDescriptor property1 = class1.Properties.First();
 
                 Assert.That(property1.Name, Is.EqualTo("StringProperty"));
                 Assert.That(property1.PropertyType.FullName, Is.EqualTo("System.String"));
 
-                ITypeDescriptor class2 = types.Single(t => t.Name == "Class2");
-                IPropertyDescriptor property2 = class2.Properties.First();
+                TypeDescriptor class2 = types.Single(t => t.Name == "Class2");
+                PropertyDescriptor property2 = class2.Properties.First();
 
                 Assert.That(property2.Name, Is.EqualTo("StringProperty"));
                 Assert.That(property2.PropertyType.FullName, Is.EqualTo("System.String"));
@@ -129,10 +122,10 @@ namespace Jeme.Reflection.Test
             AssemblyDescriptor descriptor;
             using (IAssemblyInspectionContext context = new AssemblyInspectionContext("Data\\"))
             {
-                descriptor = context.LoadAssemblyDescriptor("Data\\TestData.dll");
+                descriptor = context.LoadAssembly("Data\\TestData.dll");
             }
-            
-            ITypeDescriptor[] types = descriptor.GetTypes();
+
+            TypeDescriptor[] types = descriptor.Types;
             Assert.That(AppDomain.CurrentDomain, Does.NotHaveAssemblyLoaded("TestData, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
         }
     }

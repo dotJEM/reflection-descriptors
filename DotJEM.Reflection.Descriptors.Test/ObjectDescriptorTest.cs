@@ -1,5 +1,5 @@
-using Jeme.Reflection.Descriptors;
-using Jeme.Reflection.Descriptors.Impl;
+using DotJEM.Reflection.Descriptors.Descriptors;
+using DotJEM.Reflection.Descriptors.Descriptors.Instance;
 using NUnit.Framework;
 
 namespace Jeme.Reflection.Test
@@ -23,7 +23,7 @@ namespace Jeme.Reflection.Test
             Assert.AreEqual(simple.StringProperty, objectDescriptor.StringProperty);
             Assert.AreEqual(simple.IntProperty, objectDescriptor.IntProperty);
 
-            ITypeDescriptor typeDescriptor = objectDescriptor.GetTypeDescriptor();
+            TypeDescriptor typeDescriptor = objectDescriptor.GetTypeDescriptor();
         }
 
         [Test]

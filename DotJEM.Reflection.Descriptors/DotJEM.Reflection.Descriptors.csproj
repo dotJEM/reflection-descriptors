@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,10 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\DescriptorCache.cs" />
+    <Compile Include="Descriptors\Instance\ObjectDescriptor.cs" />
+    <Compile Include="Descriptors\References\ArrayRef.cs" />
     <Compile Include="Descriptors\AssemblyDescriptor.cs" />
-    <Compile Include="Descriptors\DescriptorLoadInfo.cs" />
-    <Compile Include="Descriptors\DescriptorUrl.cs" />
-    <Compile Include="Descriptors\DescriptorUriFactory.cs" />
+    <Compile Include="Descriptors\Loading\DescriptorLoadInfo.cs" />
+    <Compile Include="Descriptors\Loading\DescriptorUrl.cs" />
+    <Compile Include="Descriptors\Loading\DescriptorUriFactory.cs" />
+    <Compile Include="Descriptors\References\ObjectRef.cs" />
     <Compile Include="IAssemblyInspectionContext.cs" />
     <Compile Include="Inspection\AssemblyInspectionContext.cs" />
     <Compile Include="Inspection\AssemblyLoader.cs" />
@@ -51,6 +55,7 @@
     <Compile Include="Inspection\InspectionDomain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

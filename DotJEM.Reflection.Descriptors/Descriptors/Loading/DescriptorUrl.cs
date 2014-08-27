@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
 
-namespace DotJEM.Reflection.Descriptors.Descriptors
+namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
     [Serializable]
     public class DescriptorUrl : ISerializable 
@@ -18,6 +17,8 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         public bool IsValid { get; private set; }
 
         public string AssemblyLocation { get { return IsValid ? parts["AssemblyLocation"].Value : ""; } }
+        public string AssemblyName { get { return IsValid ? parts["AssemblyName"].Value : ""; } }
+        public string Type { get { return IsValid ? parts["Type"].Value : ""; } }
 
         public DescriptorUrl(string url)
         {
@@ -29,7 +30,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         #region Object Overrides
         protected bool Equals(DescriptorUrl other)
         {
-            return string.Equals(uri, other.uri);
+            return string.Equals(Url, other.Url);
         }
 
         public override bool Equals(object obj)
@@ -42,12 +43,12 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
 
         public override int GetHashCode()
         {
-            return (uri != null ? uri.GetHashCode() : 0);
+            return (Url != null ? Url.GetHashCode() : 0);
         }
 
         public override string ToString()
         {
-            return uri;
+            return Url;
         } 
         #endregion
 
@@ -66,7 +67,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         #region Serialization Members
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("url", uri);
+            info.AddValue("url", Url);
         }
 
         protected DescriptorUrl(SerializationInfo info, StreamingContext context)
@@ -94,11 +95,14 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         {
             string[] groups = uri.Split('&', '?');
 
-            map = new Dictionary<string, DescriptorUriElement>();
-            if (groups.Length < 2)
+            map = new Dictionary<string, DescriptorUriElement>(StringComparer.InvariantCultureIgnoreCase);
+            if (groups.Length < 1)
                 return false;
 
             map.Add("AssemblyLocation", new DescriptorUriElement("AssemblyLocation", groups[0]));
+            if (groups.Length < 2)
+                return true;
+
             map.Add("AssemblyName", new DescriptorUriElement("AssemblyName", groups[1]));
             for (int i = 2; i < groups.Length; i++)
             {

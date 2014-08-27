@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace DotJEM.Reflection.Descriptors.Descriptors
+namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
     internal static class DescriptorUriFactory
     {

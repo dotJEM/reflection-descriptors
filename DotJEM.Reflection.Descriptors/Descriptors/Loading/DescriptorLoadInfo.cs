@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotJEM.Reflection.Descriptors.Descriptors
+namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
     internal class DescriptorLoadInfo
     {

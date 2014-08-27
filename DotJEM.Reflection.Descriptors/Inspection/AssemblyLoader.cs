@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using DotJEM.Reflection.Descriptors.Descriptors;
+using DotJEM.Reflection.Descriptors.Descriptors.Loading;
 
 namespace DotJEM.Reflection.Descriptors.Inspection
 {
@@ -12,31 +14,38 @@ namespace DotJEM.Reflection.Descriptors.Inspection
             return new AssemblyDescriptor(assembly);
         }
 
-        //public AssemblyDescriptor LoadAssembly(DescriptorUri uri)
-        //{
-        //    return new AssemblyDescriptor(Load(uri));
-        //}
-
-        //public TypeDescriptor LoadType(DescriptorUri reference)
-        //{
-        //    Assembly assembly = Load(reference);
-
-        //    return new TypeDescriptor(assembly.GetType(reference.Type));
-        //}
-
-        public Descriptor Load(DescriptorUrl url)
+        public TypeDescriptor LoadType(Assembly assembly, DescriptorUrl url)
         {
+            //Assembly assembly = Load(url);
+
+            return new TypeDescriptor(assembly.GetType(url.Type));
+        }
+
+        private Descriptor InternalLoad(DescriptorUrl url)
+        {
+            Assembly assembly = url.IsGac ? Assembly.Load(url.AssemblyName) : Assembly.LoadFrom(url.AssemblyLocation);
+            Console.WriteLine(url);
+
+            Debugger.Break();
+
             switch (url.DescriptorType)
             {
                 case DescriptorType.Assembly:
-                    return LoadAssembly(url);
+                    return new AssemblyDescriptor(assembly);
+
                 case DescriptorType.Type:
-                    return LoadType(url);
+                    return LoadType(assembly, url);
+
                 case DescriptorType.Property:
-                    return LoadProperty(url);
+                    return null;//LoadProperty(url);
                 default:
-                    throw new ArgumentOutOfRangeException("descriptorType");
+                    throw new ArgumentOutOfRangeException("url");
             }
+        }
+
+        public Descriptor Load(string url)
+        {
+            return InternalLoad(url);
         }
 
         //private PropertyDescriptor LoadProperty(ReferenceParts reference)
@@ -48,11 +57,5 @@ namespace DotJEM.Reflection.Descriptors.Inspection
         //    return new PropertyDescriptor(property);
         //}
 
-        //private Assembly Load(ReferenceParts reference)
-        //{
-        //    if (reference.IsGac)
-        //        return Assembly.Load(reference.AssemblyName);
-        //    return Assembly.LoadFrom(reference.AssemblyLocation);
-        //}
     }
 }
