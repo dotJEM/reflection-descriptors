@@ -22,7 +22,8 @@ namespace DotJEM.Reflection.Descriptors.Cache
 
             if (!cache.ContainsKey(url))
             {
-                cache[url] = LoadDescriptor(url, loadInfo);
+                var descriptor = LoadDescriptor(url, loadInfo);
+                return (T) (cache[descriptor.Url] = descriptor);
             }
             return (T)cache[url];
         }

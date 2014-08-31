@@ -240,6 +240,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         private readonly ObjectRef<TypeDescriptor> baseType;
         private readonly ObjectRef<TypeDescriptor> underlyingSystemType;
 
+        private readonly ArrayRef<TypeDescriptor> interfaces; 
         private readonly ArrayRef<PropertyDescriptor> properties;
 
         #region Simple Properties
@@ -304,6 +305,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
 
         public override DescriptorType DescriptorType { get { return DescriptorType.Type; } }
 
+        public TypeDescriptor[] Interfaces {get { return interfaces.Resolve(this); }}
         public PropertyDescriptor[] Properties { get { return properties.Resolve(this); } }
 
         public TypeDescriptor(Type type)
@@ -374,6 +376,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
 
             //constructors = (from ctorInfo in type.GetConstructors() select new Cached<IConstructorDescriptor>(ctorInfo)).ToArray();
             properties = (from propertyInfo in type.GetProperties() select propertyInfo.CreateReference()).ToArray();
+            interfaces = (from typeInfo in type.GetInterfaces() select typeInfo.CreateReference()).ToArray();
             //methods = (from methodInfo in type.GetMethods() select new Cached<IMethodDescriptor>(methodInfo)).ToArray();
 
         }
@@ -391,6 +394,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
 
     }
 
+    [Serializable]
     public class PropertyDescriptor : MemberDescriptor
     {
         public override DescriptorType DescriptorType { get { return DescriptorType.Property; } }
@@ -407,6 +411,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         }
     }
 
+    [Serializable]
     public enum DescriptorType
     {
         Assembly,

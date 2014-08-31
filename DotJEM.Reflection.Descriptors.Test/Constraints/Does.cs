@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using NUnit.Framework.Constraints;
 
-namespace Jeme.Reflection.Test.Constraints
+namespace DotJEM.Reflection.Descriptors.Test.Constraints
 {
     public static class Does
     {

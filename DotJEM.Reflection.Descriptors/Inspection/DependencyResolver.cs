@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace DotJEM.Reflection.Descriptors.Inspection
         }
     }
 
-    public sealed class DependencyResolver
+    public sealed class DependencyResolver 
     {
         private static readonly DependencyResolver instance = new DependencyResolver();
 
@@ -47,9 +48,11 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 
         private Assembly Resolve(object sender, ResolveEventArgs args)
         {
-            return locations
+            var resolved = locations
                 .Select(location => LoadFromLocation(args, location))
                 .FirstOrDefault(assembly => assembly != null);
+            Debug.WriteLine("Was resolved: " + resolved != null);
+            return resolved;
         }
 
         private static Assembly LoadFromLocation(ResolveEventArgs args, string location)

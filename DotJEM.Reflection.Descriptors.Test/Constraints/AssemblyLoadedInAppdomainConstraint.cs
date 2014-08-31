@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Jeme.Reflection.Test.Constraints
+namespace DotJEM.Reflection.Descriptors.Test.Constraints
 {
     public class AssemblyLoadedInAppdomainConstraint : BasicConstraint
     {

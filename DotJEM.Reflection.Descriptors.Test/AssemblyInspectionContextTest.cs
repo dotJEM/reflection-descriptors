@@ -3,7 +3,7 @@ using System.Linq;
 using DotJEM.Reflection.Descriptors;
 using DotJEM.Reflection.Descriptors.Descriptors;
 using DotJEM.Reflection.Descriptors.Inspection;
-using Jeme.Reflection.Test.Constraints;
+using DotJEM.Reflection.Descriptors.Test.Constraints;
 using NUnit.Framework;
 
 namespace Jeme.Reflection.Test
@@ -26,6 +26,7 @@ namespace Jeme.Reflection.Test
             }
             Assert.That(AppDomain.CurrentDomain, Does.NotHaveAssemblyLoaded("TestData, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
         }
+
         [Test]
         public void GetTypesByInterface_TestDataDll_ReturnsDescriptor()
         {

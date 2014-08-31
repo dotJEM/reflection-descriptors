@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInspectionContextTest.cs" />
     <Compile Include="Constraints\AssemblyLoadedInAppdomainConstraint.cs" />
-    <Compile Include="Constraints\BasicConstraint.cs" />
     <Compile Include="Constraints\Does.cs" />
     <Compile Include="ObjectDescriptorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

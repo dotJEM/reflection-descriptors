@@ -8,25 +8,10 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 {
     public class AssemblyLoader : MarshalByRefObject
     {
-        public AssemblyDescriptor LoadAssembly(string assemblyPath)
-        {
-            Assembly assembly = Assembly.LoadFrom(assemblyPath);
-            return new AssemblyDescriptor(assembly);
-        }
-
-        public TypeDescriptor LoadType(Assembly assembly, DescriptorUrl url)
-        {
-            //Assembly assembly = Load(url);
-
-            return new TypeDescriptor(assembly.GetType(url.Type));
-        }
-
-        private Descriptor InternalLoad(DescriptorUrl url)
+        public Descriptor Load(DescriptorUrl url)
         {
             Assembly assembly = url.IsGac ? Assembly.Load(url.AssemblyName) : Assembly.LoadFrom(url.AssemblyLocation);
             Console.WriteLine(url);
-
-            Debugger.Break();
 
             switch (url.DescriptorType)
             {
@@ -37,16 +22,24 @@ namespace DotJEM.Reflection.Descriptors.Inspection
                     return LoadType(assembly, url);
 
                 case DescriptorType.Property:
-                    return null;//LoadProperty(url);
+                    return LoadProperty(assembly, url);
                 default:
                     throw new ArgumentOutOfRangeException("url");
             }
         }
 
-        public Descriptor Load(string url)
+        private TypeDescriptor LoadType(Assembly assembly, DescriptorUrl url)
         {
-            return InternalLoad(url);
+            return new TypeDescriptor(assembly.GetType(url.Type));
         }
+
+        private Descriptor LoadProperty(Assembly assembly, DescriptorUrl url)
+        {
+            Type type = assembly.GetType(url.Type);
+            PropertyInfo property = type.GetProperty(url.Property);
+            return new PropertyDescriptor(property);
+        }
+
 
         //private PropertyDescriptor LoadProperty(ReferenceParts reference)
         //{

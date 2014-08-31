@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
@@ -16,9 +17,10 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
         public bool IsEmpty { get { return string.IsNullOrWhiteSpace(Url); } }
         public bool IsValid { get; private set; }
 
-        public string AssemblyLocation { get { return IsValid ? parts["AssemblyLocation"].Value : ""; } }
-        public string AssemblyName { get { return IsValid ? parts["AssemblyName"].Value : ""; } }
-        public string Type { get { return IsValid ? parts["Type"].Value : ""; } }
+        public string AssemblyLocation { get { return IsValid ? parts["AssemblyLocation"] : ""; } }
+        public string AssemblyName { get { return IsValid ? parts["AssemblyName"] : ""; } }
+        public string Type { get { return IsValid ? parts["Type"] : ""; } }
+        public string Property { get { return IsValid ? parts["Property"] : ""; } }
 
         public DescriptorUrl(string url)
         {
@@ -87,7 +89,57 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
             Type = type;
             Value = value;
         }
+
+        public static implicit operator string(DescriptorUriElement parts)
+        {
+            return parts.ToString();
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
     }
+
+    internal class PropertyDescriptorUriElement : DescriptorUriElement
+    {
+        public string Name { get; set; }
+        public string ReturnType { get; set; }
+
+        public PropertyDescriptorUriElement(string key, string value)
+            : base(key, value)
+        {
+            string[] segments = value.Split(' ');
+            Name = segments[1];
+            ReturnType = segments[0];
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    internal class MethodDescriptorUriElement : DescriptorUriElement
+    {
+        public string Name { get; set; }
+        public string ReturnType { get; set; }
+        public string Arguments { get; set; }
+
+        public MethodDescriptorUriElement(string key, string value)
+            : base(key, value)
+        {
+            string[] segments = value.Split(' ', '(', ',', ')');
+            ReturnType = segments[0];
+            Name = segments[1];
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
 
     internal static class DescriptorUriParser
     {
@@ -102,14 +154,35 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
             map.Add("AssemblyLocation", new DescriptorUriElement("AssemblyLocation", groups[0]));
             if (groups.Length < 2)
                 return true;
-
-            map.Add("AssemblyName", new DescriptorUriElement("AssemblyName", groups[1]));
+            
+            map.Add("AssemblyName", new DescriptorUriElement("AssemblyName", groups[1].Substring(9)));
             for (int i = 2; i < groups.Length; i++)
             {
                 //TODO: validation of groups.
                 int split = groups[i].IndexOf('=');
                 string key = groups[i].Substring(0, split);
-                map.Add(key, new DescriptorUriElement(key, groups[i].Substring(split+1)));
+                string value = groups[i].Substring(split + 1);
+                switch (key.ToLower())
+                {
+                    case "property":
+                        map.Add(key, new PropertyDescriptorUriElement(key, value));
+                        break;
+                    //public string Type { get { return map["type"]; } }
+                    //public string Field { get { return map["field"]; } }
+                    //public string Property { get { return map["property"]; } }
+                    //public string Event { get { return map["event"]; } }
+                    case "method":
+                        map.Add(key, new MethodDescriptorUriElement(key, value));
+                        break;
+                    //method=System.String get_StringProperty()
+                    //public string Method { get { return map["method"]; } }
+                    //public string Constructor { get { return map["ctor"]; } }
+                    //public string Module { get { return map["module"]; } }
+                    default:
+                        map.Add(key, new DescriptorUriElement(key, value));
+                        break;
+                }
+
             }
 
             return true;

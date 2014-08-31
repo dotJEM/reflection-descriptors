@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
@@ -26,8 +27,11 @@ namespace DotJEM.Reflection.Descriptors.Inspection
             PermissionSet permissions = new PermissionSet(PermissionState.Unrestricted);
 
             domain = AppDomain.CreateDomain(setup.ApplicationName, evidence, setup, permissions);
+            //domain.UnhandledException += HandleException;
             resolver = Create<DependencyResolverProxy>();
         }
+
+
 
         internal void AddDependencyLocation(string directory)
         {
