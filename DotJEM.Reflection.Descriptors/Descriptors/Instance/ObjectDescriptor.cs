@@ -19,7 +19,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Instance
         {
             Type type = obj.GetType();
             //typeDescriptor = new Cached<ITypeDescriptor>(type);
-
+            
             foreach (MemberInfo member in type.GetMembers())
             {
                 FieldInfo field = member as FieldInfo;
@@ -50,7 +50,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Instance
             }
             else
             {
-                //values[member.Name] = new ObjectDescriptor(value);
+                values[member.Name] = new ObjectDescriptor(value);
             }
         }
 

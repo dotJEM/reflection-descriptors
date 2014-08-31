@@ -23,7 +23,7 @@ namespace Jeme.Reflection.Test
             Assert.AreEqual(simple.StringProperty, objectDescriptor.StringProperty);
             Assert.AreEqual(simple.IntProperty, objectDescriptor.IntProperty);
 
-            TypeDescriptor typeDescriptor = objectDescriptor.GetTypeDescriptor();
+            //TypeDescriptor typeDescriptor = objectDescriptor.GetTypeDescriptor();
         }
 
         [Test]
