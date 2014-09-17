@@ -6,7 +6,7 @@ using DotJEM.Reflection.Descriptors.Descriptors.Loading;
 
 namespace DotJEM.Reflection.Descriptors.Inspection
 {
-    public class AssemblyLoader : MarshalByRefObject
+    internal class AssemblyLoader : MarshalByRefObject
     {
         public Descriptor Load(DescriptorUrl url)
         {

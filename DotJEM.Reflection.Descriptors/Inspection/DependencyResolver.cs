@@ -36,9 +36,9 @@ namespace DotJEM.Reflection.Descriptors.Inspection
             AppDomain.CurrentDomain.AssemblyResolve += Resolve;
         }
 
-        public bool AddLocation(string location)
+        public bool AddLocation(params string[] dirs)
         {
-            return locations.Add(location);
+            return dirs.Aggregate(true, (current, dir) => locations.Add(dir) && current);
         }
 
         public bool RemoveLocation(string location)
@@ -51,7 +51,6 @@ namespace DotJEM.Reflection.Descriptors.Inspection
             var resolved = locations
                 .Select(location => LoadFromLocation(args, location))
                 .FirstOrDefault(assembly => assembly != null);
-            Debug.WriteLine("Was resolved: " + resolved != null);
             return resolved;
         }
 

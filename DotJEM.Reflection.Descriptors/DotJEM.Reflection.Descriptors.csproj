@@ -53,6 +53,7 @@
     <Compile Include="Inspection\AssemblyLoader.cs" />
     <Compile Include="Inspection\DependencyResolver.cs" />
     <Compile Include="Inspection\InspectionDomain.cs" />
+    <Compile Include="Loading\DescriptorResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -25,7 +25,7 @@ namespace DotJEM.Reflection.Descriptors.Inspection
         private readonly AssemblyLoader loader;
         private readonly DescriptorLoadInfo loadInfo;
 
-        public AssemblyLoader Loader
+        internal AssemblyLoader Loader
         {
             get { return loader; }
         }
