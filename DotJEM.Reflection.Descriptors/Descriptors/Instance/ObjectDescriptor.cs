@@ -11,24 +11,20 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Instance
     [Serializable]
     public class ObjectDescriptor : DynamicObject
     {
-
-        //private readonly ObjectRef<TypeDescriptor> typeDescriptor; 
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
  
         public ObjectDescriptor(object obj)
         {
             Type type = obj.GetType();
-            //typeDescriptor = new Cached<ITypeDescriptor>(type);
-            
-            foreach (MemberInfo member in type.GetMembers())
-            {
-                FieldInfo field = member as FieldInfo;
-                if (field != null)
-                    SetMember(member, field.GetValue(obj));
 
-                PropertyInfo property = member as PropertyInfo;
-                if (property != null)
-                    SetMember(member, property.GetValue(obj, null));
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                SetProperty(property, property.GetValue(obj, null));
+            }
+
+            foreach (FieldInfo property in type.GetFields())
+            {
+                SetProperty(property, property.GetValue(obj));
             }
         }
 
@@ -37,7 +33,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Instance
             return values.TryGetValue(binder.Name, out result);
         }
 
-        private void SetMember(MemberInfo member, object value)
+        private void SetProperty(MemberInfo member, object value)
         {
             Type type = value.GetType();
             if (type.IsPrimitive || type.IsEnum || wellKnownTypes.Contains(type))
@@ -50,7 +46,9 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Instance
             }
             else
             {
-                values[member.Name] = new ObjectDescriptor(value);
+                //TODO: This generates a stack overflow.
+                //      one thing that could cause this is that we have cercular references.
+                //values[member.Name] = new ObjectDescriptor(value);
             }
         }
 

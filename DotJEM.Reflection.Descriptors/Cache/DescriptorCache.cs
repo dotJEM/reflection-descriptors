@@ -38,7 +38,6 @@ namespace DotJEM.Reflection.Descriptors.Cache
 
         private Descriptor LoadDescriptor(DescriptorUrl url, DescriptorLoadInfo loadInfo)
         {
-            //var args = OnDescriptorResolve(new ResolveDescriptorEventArgs(uri));
             Descriptor descriptor;
             if (Context == null)
             {
@@ -57,19 +56,7 @@ namespace DotJEM.Reflection.Descriptors.Cache
             return descriptor;
         }
 
-        //public event EventHandler<ResolveDescriptorEventArgs> DescriptorResolve;
-
-        //private ResolveDescriptorEventArgs OnDescriptorResolve(ResolveDescriptorEventArgs args)
-        //{
-        //    if (DescriptorResolve != null) 
-        //        DescriptorResolve(this, args);
-        //    return args;
-        //}
-
         public AssemblyInspectionContext Context { get; set; }
     }
 
-    //internal class ResolveDescriptorEventArgs
-    //{
-    //}
 }
