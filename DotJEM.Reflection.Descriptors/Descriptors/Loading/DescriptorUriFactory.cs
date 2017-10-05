@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
@@ -66,4 +67,81 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
         //    throw new NotImplementedException();
         //}
     }
+    public class AssemblyDescriptorUri : DescriptorUri {
+        public string Location { get; }
+        public override DescriptorType Type => DescriptorType.Assembly;
+
+        public AssemblyDescriptorUri(string location)
+        {
+            Location = location;
+        }
+    }
+
+    public class TypeDescriptorUri : DescriptorUri
+    {
+        private string value;
+        private DescriptorUri assembly;
+
+        public TypeDescriptorUri(string value, DescriptorUri assembly)
+        {
+            this.value = value;
+            this.assembly = assembly;
+        }
+    }
+
+    public abstract class DescriptorUri
+    {
+        public abstract DescriptorType Type { get; }
+        private static readonly Regex pattern = new Regex("(?'type'\\w+)\\:\\/\\/(?'val'[^@])(@(?'at'.*))?", 
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public static bool TryParse(string str, out DescriptorUri result)
+        {
+            result = null;
+            Match match = pattern.Match(str);
+            if (!match.Success)
+                return false;
+
+            switch (match.Groups["type"].Value.ToLowerInvariant())
+            {
+                case "assembly":
+                    result = new AssemblyDescriptorUri(match.Groups["val"].Value);
+                    return true;
+                case "type":
+                    var at = match.Groups["at"].Value;
+                    if (string.IsNullOrEmpty(at))
+                        return false;
+
+                    if (!TryParse(at, out DescriptorUri assembly))
+                        return false;
+
+                    result = new TypeDescriptorUri(match.Groups["val"].Value, assembly);
+                    return true;
+                case "method":
+                case "constructor":
+                case "property":
+                case "field":
+                case "event":
+                    return true;
+            }
+            return false;
+
+            //Assembly,
+            //Type,
+            //Module,
+            //Method,
+            //Property,
+            //Field,
+            //Event,
+            //Constructor,
+            //Attribute,
+            //Object,
+            //Invalid
+
+
+
+
+        }
+    }
+
 }
