@@ -5,28 +5,36 @@ using System.Runtime.Serialization;
 
 namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
+
+    /// Descriptor URLS:
+    /// 
+    /// assembly://C:/...
+    /// assembly://./
+    /// type://
+
     [Serializable]
-    public class DescriptorUrl : ISerializable 
+    public class DescriptorUrl : ISerializable
     {
         private readonly IDictionary<string, DescriptorUriElement> parts;
        
         public string Url { get; set; }
         public DescriptorType DescriptorType { get; set; }
 
-        public bool IsGac { get { return AssemblyLocation == "[GAC]"; } }
-        public bool IsEmpty { get { return string.IsNullOrWhiteSpace(Url); } }
-        public bool IsValid { get; private set; }
+        public bool IsGac => AssemblyLocation == "[GAC]";
+        public bool IsEmpty => string.IsNullOrWhiteSpace(Url);
+        public bool IsValid { get; }
 
-        public string AssemblyLocation { get { return IsValid ? parts["AssemblyLocation"] : ""; } }
-        public string AssemblyName { get { return IsValid ? parts["AssemblyName"] : ""; } }
-        public string Type { get { return IsValid ? parts["Type"] : ""; } }
-        public string Property { get { return IsValid ? parts["Property"] : ""; } }
+        public string AssemblyLocation => IsValid ? parts["AssemblyLocation"] : "";
+        public string AssemblyName => IsValid ? parts["AssemblyName"] : "";
+        public string Type => IsValid ? parts["Type"] : "";
+        public string Property => IsValid ? parts["Property"] : "";
 
         public DescriptorUrl(string url)
         {
             Url = url;
             IsValid = DescriptorUriParser.TryParse(url, out parts);
-            DescriptorType = IsValid ? DescriptorUriParser.GetDescriptorType(parts) : DescriptorType.Invalid;
+            DescriptorType = IsValid ? DescriptorUriParser
+                .GetDescriptorType(parts) : DescriptorType.Invalid;
         }
 
         #region Object Overrides
@@ -145,6 +153,8 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
     {
         public static bool TryParse(string uri, out IDictionary<string, DescriptorUriElement> map)
         {
+            
+
             string[] groups = uri.Split('&', '?');
 
             map = new Dictionary<string, DescriptorUriElement>(StringComparer.InvariantCultureIgnoreCase);
@@ -188,25 +198,6 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
             return true;
         }
 
-        //...&type=System.Collections.Generic.List`1[T]
-        //...&type=System.Collections.Generic.List`1[System.Int32]
-        //...&method=Int32 Bot1[T](T)
-        //...&method=Int32 Bot2[T,X](T, X, Int32)
-        //...&method=Int32 Bot3[T,X](T, X, Int32)
-
-        //public MemberTypes GetMemberType()
-        //{
-        //    if (map.ContainsKey("type"))
-        //    {
-        //        if (map.ContainsKey("field")) return MemberTypes.Field;
-        //        if (map.ContainsKey("property")) return MemberTypes.Property;
-        //        if (map.ContainsKey("event")) return MemberTypes.Event;
-        //        if (map.ContainsKey("method")) return MemberTypes.Method;
-        //        if (map.ContainsKey("ctor")) return MemberTypes.Constructor;
-        //        return MemberTypes.TypeInfo;
-        //    }
-        //    return MemberTypes.Custom;
-        //}
 
         public static DescriptorType GetDescriptorType(IDictionary<string, DescriptorUriElement> map)
         {

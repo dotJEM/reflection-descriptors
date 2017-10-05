@@ -11,13 +11,13 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
     [Serializable]
     public abstract class Descriptor
     {
-        public DescriptorUrl Url { get; private set; }
+        public DescriptorUrl Url { get; }
         public abstract DescriptorType DescriptorType { get; }
 
-        internal DescriptorLoadInfo LoadInfo { get; set; }
+        internal LoadInfo LoadInfo { get; set; }
         internal DescriptorCache Cache { get; set; }
 
-        internal protected Descriptor(string url)
+        protected Descriptor(string url)
         {
             Url = url;
         }
@@ -26,21 +26,21 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
     [Serializable]
     public class AssemblyDescriptor : Descriptor
     {
-        public bool IsDynamic { get; private set; }
-        public bool IsFullyTrusted { get; private set; }
-        public bool GlobalAssemblyCache { get; private set; }
+        public bool IsDynamic { get; }
+        public bool IsFullyTrusted { get; }
+        public bool GlobalAssemblyCache { get; }
 
-        public string FullName { get; private set; }
-        public string Location { get; private set; }
-        public string CodeBase { get; private set; }
+        public string FullName { get; }
+        public string Location { get; }
+        public string CodeBase { get; }
 
-        public override DescriptorType DescriptorType { get { return DescriptorType.Assembly; } }
+        public override DescriptorType DescriptorType => DescriptorType.Assembly;
 
         private readonly ArrayRef<TypeDescriptor> types;
         private readonly ArrayRef<AssemblyDescriptor> assemblies;
 
-        public TypeDescriptor[] Types { get { return types.Resolve(this); } }
-        public AssemblyDescriptor[] ReferencedAssemblies { get { return assemblies.Resolve(this); } }
+        public TypeDescriptor[] Types => types.Resolve(this);
+        public AssemblyDescriptor[] ReferencedAssemblies => assemblies.Resolve(this);
 
         internal AssemblyDescriptor(Assembly assembly)
             : base(assembly.CreateReference())
@@ -99,9 +99,9 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
     [Serializable]
     public abstract class MemberDescriptor : Descriptor
     {
-        public string Name { get; private set; }
-        public int MetadataToken { get; private set; }
-        public MemberTypes MemberType { get; private set; }
+        public string Name { get; }
+        public int MetadataToken { get; }
+        public MemberTypes MemberType { get; }
 
         private readonly AttributeDescriptor[] customAttributes;
 
@@ -244,69 +244,69 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
         private readonly ArrayRef<PropertyDescriptor> properties;
 
         #region Simple Properties
-        public string FullName { get; private set; }
-        public string Namespace { get; private set; }
-        public string AssemblyQualifiedName { get; private set; }
+        public string FullName { get; }
+        public string Namespace { get; }
+        public string AssemblyQualifiedName { get; }
 
-        public int GenericParameterPosition { get; private set; }
+        public int GenericParameterPosition { get; }
 
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; }
 
-        public TypeAttributes Attributes { get; private set; }
-        public GenericParameterAttributes GenericParameterAttributes { get; private set; }
+        public TypeAttributes Attributes { get; }
+        public GenericParameterAttributes GenericParameterAttributes { get; }
         #endregion
 
         #region Boolean Flags
-        public bool IsNested { get; private set; }
-        public bool IsVisible { get; private set; }
-        public bool IsNotPublic { get; private set; }
-        public bool IsPublic { get; private set; }
-        public bool IsNestedPublic { get; private set; }
-        public bool IsNestedPrivate { get; private set; }
-        public bool IsNestedFamily { get; private set; }
-        public bool IsNestedAssembly { get; private set; }
-        public bool IsNestedFamANDAssem { get; private set; }
-        public bool IsNestedFamORAssem { get; private set; }
-        public bool IsAutoLayout { get; private set; }
-        public bool IsLayoutSequential { get; private set; }
-        public bool IsExplicitLayout { get; private set; }
-        public bool IsClass { get; private set; }
-        public bool IsInterface { get; private set; }
-        public bool IsValueType { get; private set; }
-        public bool IsAbstract { get; private set; }
-        public bool IsSealed { get; private set; }
-        public bool IsEnum { get; private set; }
-        public bool IsSpecialName { get; private set; }
-        public bool IsImport { get; private set; }
-        public bool IsSerializable { get; private set; }
-        public bool IsAnsiClass { get; private set; }
-        public bool IsUnicodeClass { get; private set; }
-        public bool IsAutoClass { get; private set; }
-        public bool IsArray { get; private set; }
-        public bool IsGenericType { get; private set; }
-        public bool IsGenericTypeDefinition { get; private set; }
-        public bool IsGenericParameter { get; private set; }
-        public bool ContainsGenericParameters { get; private set; }
-        public bool IsByRef { get; private set; }
-        public bool IsPointer { get; private set; }
-        public bool IsPrimitive { get; private set; }
-        public bool IsCOMObject { get; private set; }
-        public bool HasElementType { get; private set; }
-        public bool IsContextful { get; private set; }
-        public bool IsMarshalByRef { get; private set; }
-        public bool IsSecurityCritical { get; private set; }
-        public bool IsSecuritySafeCritical { get; private set; }
-        public bool IsSecurityTransparent { get; private set; }
+        public bool IsNested { get; }
+        public bool IsVisible { get; }
+        public bool IsNotPublic { get; }
+        public bool IsPublic { get; }
+        public bool IsNestedPublic { get; }
+        public bool IsNestedPrivate { get; }
+        public bool IsNestedFamily { get; }
+        public bool IsNestedAssembly { get; }
+        public bool IsNestedFamANDAssem { get; }
+        public bool IsNestedFamORAssem { get; }
+        public bool IsAutoLayout { get; }
+        public bool IsLayoutSequential { get; }
+        public bool IsExplicitLayout { get; }
+        public bool IsClass { get; }
+        public bool IsInterface { get; }
+        public bool IsValueType { get; }
+        public bool IsAbstract { get; }
+        public bool IsSealed { get; }
+        public bool IsEnum { get; }
+        public bool IsSpecialName { get; }
+        public bool IsImport { get; }
+        public bool IsSerializable { get; }
+        public bool IsAnsiClass { get; }
+        public bool IsUnicodeClass { get; }
+        public bool IsAutoClass { get; }
+        public bool IsArray { get; }
+        public bool IsGenericType { get; }
+        public bool IsGenericTypeDefinition { get; }
+        public bool IsGenericParameter { get; }
+        public bool ContainsGenericParameters { get; }
+        public bool IsByRef { get; }
+        public bool IsPointer { get; }
+        public bool IsPrimitive { get; }
+        public bool IsCOMObject { get; }
+        public bool HasElementType { get; }
+        public bool IsContextful { get; }
+        public bool IsMarshalByRef { get; }
+        public bool IsSecurityCritical { get; }
+        public bool IsSecuritySafeCritical { get; }
+        public bool IsSecurityTransparent { get; }
         #endregion
 
-        public AssemblyDescriptor Assembly { get { return assembly.Resolve(this); } }
-        public TypeDescriptor BaseType { get { return baseType.Resolve(this); } }
-        public TypeDescriptor UnderlyingSystemType { get { return underlyingSystemType.Resolve(this); } }
+        public AssemblyDescriptor Assembly => assembly.Resolve(this);
+        public TypeDescriptor BaseType => baseType.Resolve(this);
+        public TypeDescriptor UnderlyingSystemType => underlyingSystemType.Resolve(this);
 
-        public override DescriptorType DescriptorType { get { return DescriptorType.Type; } }
+        public override DescriptorType DescriptorType => DescriptorType.Type;
 
-        public TypeDescriptor[] Interfaces {get { return interfaces.Resolve(this); }}
-        public PropertyDescriptor[] Properties { get { return properties.Resolve(this); } }
+        public TypeDescriptor[] Interfaces => interfaces.Resolve(this);
+        public PropertyDescriptor[] Properties => properties.Resolve(this);
 
         public TypeDescriptor(Type type)
             : base(type, type.CreateReference())
@@ -397,11 +397,11 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
     [Serializable]
     public class PropertyDescriptor : MemberDescriptor
     {
-        public override DescriptorType DescriptorType { get { return DescriptorType.Property; } }
+        public override DescriptorType DescriptorType => DescriptorType.Property;
 
         private readonly ObjectRef<TypeDescriptor> propertyType;
 
-        public TypeDescriptor PropertyType { get { return propertyType.Resolve(this); } }
+        public TypeDescriptor PropertyType => propertyType.Resolve(this);
 
 
         public PropertyDescriptor(PropertyInfo property)

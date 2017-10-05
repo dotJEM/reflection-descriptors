@@ -22,7 +22,8 @@ namespace DotJEM.Reflection.Descriptors.Loading
 
     public class DescriptorResolver : IDescriptorResolver
     {
-        private readonly Dictionary<string, Assembly> cache = new Dictionary<string, Assembly>(); 
+        private readonly Dictionary<string, Assembly> cache = 
+            new Dictionary<string, Assembly>(); 
 
         public Type Resolve(TypeDescriptor self)
         {

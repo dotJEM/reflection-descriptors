@@ -22,13 +22,9 @@ namespace DotJEM.Reflection.Descriptors.Inspection
     {
         private readonly InspectionDomain domain;
         private readonly DescriptorCache cache;
-        private readonly AssemblyLoader loader;
-        private readonly DescriptorLoadInfo loadInfo;
+        private readonly LoadInfo loadInfo;
 
-        internal AssemblyLoader Loader
-        {
-            get { return loader; }
-        }
+        internal AssemblyLoader Loader { get; }
 
         public AssemblyInspectionContext()
             : this(Environment.CurrentDirectory, true)
@@ -48,14 +44,14 @@ namespace DotJEM.Reflection.Descriptors.Inspection
         internal AssemblyInspectionContext(string workingDirectory, bool shadowCopy, DescriptorCache cache)
         {
             domain = new InspectionDomain(workingDirectory, shadowCopy);
-            loadInfo = new DescriptorLoadInfo(workingDirectory, shadowCopy);
+            loadInfo = new LoadInfo(workingDirectory, shadowCopy);
 
             AddDependencyLocation(Environment.CurrentDirectory);
             AddDependencyLocation(workingDirectory);
 
             cache.Context = this;
 
-            loader = domain.Create<AssemblyLoader>();
+            Loader = domain.Create<AssemblyLoader>();
 
             this.cache = cache;
         }

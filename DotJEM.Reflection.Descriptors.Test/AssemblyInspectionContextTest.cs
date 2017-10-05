@@ -3,8 +3,8 @@ using System.Linq;
 using DotJEM.Reflection.Descriptors;
 using DotJEM.Reflection.Descriptors.Descriptors;
 using DotJEM.Reflection.Descriptors.Inspection;
-using DotJEM.Reflection.Descriptors.Test.Constraints;
 using NUnit.Framework;
+using Does = DotJEM.Reflection.Descriptors.Test.Constraints.Does;
 
 namespace Jeme.Reflection.Test
 {
@@ -15,7 +15,7 @@ namespace Jeme.Reflection.Test
         [Test]
         public void LoadAssemblyDescriptor_TestDataDll_ReturnsDescriptor()
         {
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
                 AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
 

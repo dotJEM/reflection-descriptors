@@ -44,7 +44,7 @@
     <Compile Include="Descriptors\Instance\ObjectDescriptor.cs" />
     <Compile Include="Descriptors\References\ArrayRef.cs" />
     <Compile Include="Descriptors\AssemblyDescriptor.cs" />
-    <Compile Include="Descriptors\Loading\DescriptorLoadInfo.cs" />
+    <Compile Include="Descriptors\Loading\LoadInfo.cs" />
     <Compile Include="Descriptors\Loading\DescriptorUrl.cs" />
     <Compile Include="Descriptors\Loading\DescriptorUriFactory.cs" />
     <Compile Include="Descriptors\References\ObjectRef.cs" />

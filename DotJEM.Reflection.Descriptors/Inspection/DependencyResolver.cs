@@ -25,9 +25,7 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 
     public sealed class DependencyResolver 
     {
-        private static readonly DependencyResolver instance = new DependencyResolver();
-
-        public static DependencyResolver Instance { get { return instance; } }
+        public static DependencyResolver Instance { get; } = new DependencyResolver();
 
         private readonly HashSet<string> locations = new HashSet<string>();
 
@@ -61,7 +59,7 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 
         private static Assembly LoadAs(string location, ResolveEventArgs args, string extention)
         {
-            string path = Path.Combine(location, string.Format("{0}.{1}", new AssemblyName(args.Name).Name, extention));
+            string path = Path.Combine(location, $"{new AssemblyName(args.Name).Name}.{extention}");
             return File.Exists(path) ? Assembly.LoadFile(path) : null;
         }
     }

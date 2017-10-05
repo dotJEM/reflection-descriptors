@@ -2,17 +2,16 @@
 
 namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 {
-    internal class DescriptorLoadInfo
+    public class LoadInfo
     {
-        public bool ShadowCopy { get; private set; }
-        public string WorkingDirectory { get; private set; }
-        public List<string> Locations { get; private set; }
+        public bool ShadowCopy { get; }
+        public string WorkingDirectory { get; }
+        public List<string> Locations { get; }
 
-        public DescriptorLoadInfo(string workingDirectory, bool shadowCopy)
+        public LoadInfo(string workingDirectory, bool shadowCopy)
         {
             WorkingDirectory = workingDirectory;
             ShadowCopy = shadowCopy;
-
             Locations = new List<string>();
         }
 

@@ -11,11 +11,11 @@ namespace DotJEM.Reflection.Descriptors.Cache
     /// <summary>
     /// 
     /// </summary>
-    internal sealed class DescriptorCache
+    public sealed class DescriptorCache
     {
         private readonly Dictionary<DescriptorUrl, Descriptor> cache = new Dictionary<DescriptorUrl, Descriptor>();
 
-        public T Get<T>(DescriptorUrl url, DescriptorLoadInfo loadInfo) where T : Descriptor
+        public T Get<T>(DescriptorUrl url, LoadInfo loadInfo) where T : Descriptor
         {
             if (url == null || url.IsEmpty)
                 return default(T);
@@ -28,7 +28,7 @@ namespace DotJEM.Reflection.Descriptors.Cache
             return (T)cache[url];
         }
 
-        public AssemblyDescriptor LoadAssembly(string path, DescriptorLoadInfo loadInfo)
+        public AssemblyDescriptor LoadAssembly(string path, LoadInfo loadInfo)
         {
             DescriptorUrl url = (from key in cache.Keys
                                  where key.AssemblyLocation.Equals(path, StringComparison.InvariantCultureIgnoreCase)
@@ -36,7 +36,7 @@ namespace DotJEM.Reflection.Descriptors.Cache
             return Get<AssemblyDescriptor>(url, loadInfo);
         }
 
-        private Descriptor LoadDescriptor(DescriptorUrl url, DescriptorLoadInfo loadInfo)
+        private Descriptor LoadDescriptor(DescriptorUrl url, LoadInfo loadInfo)
         {
             Descriptor descriptor;
             if (Context == null)
@@ -49,7 +49,7 @@ namespace DotJEM.Reflection.Descriptors.Cache
                    return descriptor;
                 }
             }
-            object value = Context.Loader.Load(url);
+            object value = Context.Loader.Load(url.Url);
             descriptor = (Descriptor) value;
             descriptor.LoadInfo = loadInfo;
             descriptor.Cache = this;

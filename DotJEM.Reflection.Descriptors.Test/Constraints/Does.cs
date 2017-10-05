@@ -4,7 +4,7 @@ using NUnit.Framework.Constraints;
 
 namespace DotJEM.Reflection.Descriptors.Test.Constraints
 {
-    public static class Does
+    public class Does
     {
         public static Constraint HaveAssemblyLoaded(string fullName)
         {
@@ -34,11 +34,13 @@ namespace DotJEM.Reflection.Descriptors.Test.Constraints
         // ReSharper restore UnusedMember.Local
     }
 
+
     public abstract class BasicConstraint : Constraint
     {
         private readonly BasicConstraint inner;
         private readonly StringBuilder description = new StringBuilder();
         private readonly List<string> information = new List<string>();
+        protected object actual;
 
         protected BasicConstraint(BasicConstraint inner = null)
         {
@@ -57,14 +59,24 @@ namespace DotJEM.Reflection.Descriptors.Test.Constraints
             return this;
         }
 
-        public override void WriteMessageTo(MessageWriter writer)
+        public override ConstraintResult ApplyTo<TActual>(TActual actual)
         {
-            writer.WriteLine(description.ToString());
-            foreach (string line in information)
-                writer.WriteLine("  " + line);
+            bool success = Matches(actual);
+            Description = BuildDescription();
+            return new ConstraintResult(this, actual, success);
         }
 
-        public override bool Matches(object actual)
+
+        public string BuildDescription()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(description.ToString());
+            foreach (string line in information)
+                builder.AppendLine("  " + line);
+            return builder.ToString();
+        }
+
+        public virtual bool Matches(object actual)
         {
             this.actual = actual;
             return inner != null ? inner.Matches(actual) : DoesMatch(actual);
@@ -75,7 +87,6 @@ namespace DotJEM.Reflection.Descriptors.Test.Constraints
             return inner.DoesMatch(actual);
         }
 
-        public override void WriteDescriptionTo(MessageWriter writer) { }
     }
 
     public class HaveConstraint : BasicConstraint

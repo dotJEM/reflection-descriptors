@@ -8,8 +8,9 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 {
     internal class AssemblyLoader : MarshalByRefObject
     {
-        public Descriptor Load(DescriptorUrl url)
+        public Descriptor Load(string u)
         {
+            DescriptorUrl url = u;
             Assembly assembly = url.IsGac ? Assembly.Load(url.AssemblyName) : Assembly.LoadFrom(url.AssemblyLocation);
             Console.WriteLine(url);
 
