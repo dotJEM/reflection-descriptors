@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotJEM.Reflection.Descriptors.Test</RootNamespace>
     <AssemblyName>DotJEM.Reflection.Descriptors.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,7 @@
     <Compile Include="AssemblyInspectionContextTest.cs" />
     <Compile Include="Constraints\AssemblyLoadedInAppdomainConstraint.cs" />
     <Compile Include="Constraints\Does.cs" />
+    <Compile Include="Descriptors\Loading\DescriptorUriFactoryTest.cs" />
     <Compile Include="ObjectDescriptorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
