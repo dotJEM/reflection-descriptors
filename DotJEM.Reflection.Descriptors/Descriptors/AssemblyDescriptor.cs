@@ -11,15 +11,15 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
     [Serializable]
     public abstract class Descriptor
     {
-        public DescriptorUrl Url { get; }
+        public string Uri { get; }
         public abstract DescriptorType DescriptorType { get; }
 
         internal LoadInfo LoadInfo { get; set; }
         internal DescriptorCache Cache { get; set; }
 
-        protected Descriptor(string url)
+        protected Descriptor(string uri)
         {
-            Url = url;
+            Uri = uri;
         }
     }
 
@@ -105,8 +105,8 @@ namespace DotJEM.Reflection.Descriptors.Descriptors
 
         private readonly AttributeDescriptor[] customAttributes;
 
-        protected MemberDescriptor(MemberInfo member, string url)
-            : base(url)
+        protected MemberDescriptor(MemberInfo member, string uri)
+            : base(uri)
         {
             MetadataToken = member.MetadataToken;
             Name = member.Name;

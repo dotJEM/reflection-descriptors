@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,30 +14,48 @@ namespace DotJEM.Reflection.Descriptors.Cache
     /// </summary>
     public sealed class DescriptorCache
     {
-        private readonly Dictionary<DescriptorUrl, Descriptor> cache = new Dictionary<DescriptorUrl, Descriptor>();
+        //private readonly Dictionary<DescriptorUri, Descriptor> cache = new Dictionary<DescriptorUri, Descriptor>();
 
-        public T Get<T>(DescriptorUrl url, LoadInfo loadInfo) where T : Descriptor
+        private readonly ConcurrentDictionary<DescriptorType, ConcurrentDictionary<DescriptorUri, Descriptor>> cache 
+            = new ConcurrentDictionary<DescriptorType, ConcurrentDictionary<DescriptorUri, Descriptor>>();
+
+        public DescriptorCache()
         {
-            if (url == null || url.IsEmpty)
+            cache.TryAdd(DescriptorType.Assembly, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Type, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Field, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Property, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Constructor, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Method, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Event, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+            cache.TryAdd(DescriptorType.Attribute, new ConcurrentDictionary<DescriptorUri, Descriptor>());
+        }
+
+        public T Get<T>(DescriptorUri uri, LoadInfo loadInfo) where T : Descriptor
+        {
+            if (uri == null || !uri.IsValid)// || url.IsEmpty)
                 return default(T);
 
-            if (!cache.ContainsKey(url))
-            {
-                var descriptor = LoadDescriptor(url, loadInfo);
-                return (T) (cache[descriptor.Url] = descriptor);
-            }
-            return (T)cache[url];
+            return (T) cache[uri.Type].GetOrAdd(uri, key => LoadDescriptor(key, loadInfo));
+
+            //if (!cache.ContainsKey(uri))
+            //{
+            //    var descriptor = LoadDescriptor(url, loadInfo);
+            //    return (T) (cache[descriptor.Url] = descriptor);
+            //}
+            //return (T)cache[url];
         }
 
         public AssemblyDescriptor LoadAssembly(string path, LoadInfo loadInfo)
         {
-            DescriptorUrl url = (from key in cache.Keys
-                                 where key.AssemblyLocation.Equals(path, StringComparison.InvariantCultureIgnoreCase)
-                                 select key).SingleOrDefault() ?? path;
+            path = Path.GetFullPath(path);
+            DescriptorUri url = (from key in cache[DescriptorType.Assembly].Keys
+                                 where key.AssemblyPath.Equals(path, StringComparison.InvariantCultureIgnoreCase)
+                                 select key).SingleOrDefault() ?? new AssemblyDescriptorUri($"assembly://{path}", path);
             return Get<AssemblyDescriptor>(url, loadInfo);
         }
 
-        private Descriptor LoadDescriptor(DescriptorUrl url, LoadInfo loadInfo)
+        private Descriptor LoadDescriptor(DescriptorUri uri, LoadInfo loadInfo)
         {
             Descriptor descriptor;
             if (Context == null)
@@ -44,12 +63,12 @@ namespace DotJEM.Reflection.Descriptors.Cache
                 using (Context = new AssemblyInspectionContext(loadInfo.WorkingDirectory, loadInfo.ShadowCopy, this))
                 {
                    loadInfo.Locations.ForEach(loc => Context.AddDependencyLocation(loc));
-                   descriptor = Context.Loader.Load(url);
+                   descriptor = Context.Loader.Load(uri.Value);
                    descriptor.LoadInfo = loadInfo;
                    return descriptor;
                 }
             }
-            object value = Context.Loader.Load(url.Url);
+            object value = Context.Loader.Load(uri.Value);
             descriptor = (Descriptor) value;
             descriptor.LoadInfo = loadInfo;
             descriptor.Cache = this;

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using DotJEM.Reflection.Descriptors;
 using DotJEM.Reflection.Descriptors.Descriptors;
@@ -15,11 +16,13 @@ namespace Jeme.Reflection.Test
         [Test]
         public void LoadAssemblyDescriptor_TestDataDll_ReturnsDescriptor()
         {
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+
             using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly(loadFrom);
 
-                Assert.That(descriptor.Location, Is.EqualTo(Environment.CurrentDirectory + "\\Data\\TestData.dll"));
+                Assert.That(descriptor.Location, Is.EqualTo(loadFrom));
                 Assert.That(descriptor.GlobalAssemblyCache, Is.False);
                 Assert.That(descriptor.IsFullyTrusted, Is.True);
                 Assert.That(descriptor.FullName, Is.EqualTo("TestData, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
@@ -30,9 +33,10 @@ namespace Jeme.Reflection.Test
         [Test]
         public void GetTypesByInterface_TestDataDll_ReturnsDescriptor()
         {
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly(loadFrom);
 
                 TypeDescriptor[] types = descriptor.Types;
 

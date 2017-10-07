@@ -5,11 +5,11 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.References
     [Serializable]
     internal class ArrayRef<TDescriptor> where TDescriptor : Descriptor
     {
-        private readonly string[] urls;
+        private readonly string[] uris;
 
-        public ArrayRef(string[] urls)
+        public ArrayRef(string[] uris)
         {
-            this.urls = urls;
+            this.uris = uris;
         }
 
         public static implicit operator ArrayRef<TDescriptor>(string[] urls)
@@ -19,9 +19,9 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.References
 
         public TDescriptor[] Resolve(Descriptor parent)
         {
-            return Array.ConvertAll(urls, url =>
+            return Array.ConvertAll(uris, uri =>
             {
-                var descriptor = parent.Cache.Get<TDescriptor>(url, parent.LoadInfo);
+                var descriptor = parent.Cache.Get<TDescriptor>(uri, parent.LoadInfo);
                 descriptor.LoadInfo = parent.LoadInfo;
                 return descriptor;
             });

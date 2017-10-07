@@ -39,8 +39,8 @@ namespace DotJEM.Reflection.Descriptors.Loading
             DependencyResolver.Instance.AddLocation(self.LoadInfo.WorkingDirectory);
             DependencyResolver.Instance.AddLocation(self.LoadInfo.Locations.ToArray());
 
-            DescriptorUrl url = self.Url;
-            return url.IsGac ? Assembly.Load(url.AssemblyName) : Assembly.LoadFrom(url.AssemblyLocation);
+            DescriptorUri uri = self.Uri;
+            return Assembly.LoadFrom(uri.AssemblyPath);
         }
     }
 }

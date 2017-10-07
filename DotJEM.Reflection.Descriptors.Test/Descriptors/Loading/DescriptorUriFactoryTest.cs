@@ -69,7 +69,7 @@ namespace DotJEM.Reflection.Descriptors.Test.Descriptors.Loading
             // 
             string uri = "type://e3e508c0-e442-3b15-a686-5f49daf2e138@assembly://C:\\dummy space\\My.DLL";
             string uri2 = "method://System.String MyMethod(System.String, System.String)@type://e3e508c0-e442-3b15-a686-5f49daf2e138@assembly://C:\\dummy space\\My.DLL";
-            DescriptorUri.TryParse(uri, out DescriptorUri parsed);
+            DescriptorUri parsed = DescriptorUri.Parse(uri);
 
             Assert.That(parsed, Is.TypeOf<TypeDescriptorUri>());
 
@@ -79,7 +79,7 @@ namespace DotJEM.Reflection.Descriptors.Test.Descriptors.Loading
         [TestCase("method://System.String MyMethod(System.String, System.String)@type://e3e508c0-e442-3b15-a686-5f49daf2e138@assembly://C:\\dummy space\\My.DLL", typeof(MethodDescriptorUri))]
         public void TryParse_ValidUri_ReturnsExpectedType(string uri, Type expectedType)
         {
-            DescriptorUri.TryParse(uri, out DescriptorUri parsed);
+            DescriptorUri parsed = DescriptorUri.Parse(uri);
             Assert.That(parsed, Is.TypeOf(expectedType));
         }
     }

@@ -8,48 +8,46 @@ namespace DotJEM.Reflection.Descriptors.Inspection
 {
     internal class AssemblyLoader : MarshalByRefObject
     {
-        public Descriptor Load(string u)
-        {
-            DescriptorUrl url = u;
-            Assembly assembly = url.IsGac ? Assembly.Load(url.AssemblyName) : Assembly.LoadFrom(url.AssemblyLocation);
-            Console.WriteLine(url);
+        public Descriptor Load(string uri) => Load(DescriptorUri.Parse(uri));
 
-            switch (url.DescriptorType)
+        private Descriptor Load(DescriptorUri uri)
+        {
+            if(!uri.IsValid)
+                throw new ArgumentException(nameof(uri));
+
+            //TODO: Check if it's already loaded.
+            Assembly assembly = Assembly.LoadFrom(uri.AssemblyPath);
+            Console.WriteLine(uri);
+
+            switch (uri.Type)
             {
                 case DescriptorType.Assembly:
                     return new AssemblyDescriptor(assembly);
 
                 case DescriptorType.Type:
-                    return LoadType(assembly, url);
+                    return LoadType(assembly, (TypeDescriptorUri) uri);
 
                 case DescriptorType.Property:
-                    return LoadProperty(assembly, url);
+                    return LoadProperty(assembly, (PropertyDescriptorUri) uri);
+
                 default:
-                    throw new ArgumentOutOfRangeException("url");
+                    throw new ArgumentOutOfRangeException(nameof(uri));
             }
         }
 
-        private TypeDescriptor LoadType(Assembly assembly, DescriptorUrl url)
+        private TypeDescriptor LoadType(Assembly assembly, TypeDescriptorUri url)
         {
-            return new TypeDescriptor(assembly.GetType(url.Type));
+            return new TypeDescriptor(assembly.GetType(url.TypeName));
         }
 
-        private Descriptor LoadProperty(Assembly assembly, DescriptorUrl url)
+        private Descriptor LoadProperty(Assembly assembly, PropertyDescriptorUri url)
         {
-            Type type = assembly.GetType(url.Type);
+            TypeDescriptorUri typeUri = (TypeDescriptorUri)url.DeclaringType ;
+            Type type = assembly.GetType(typeUri.TypeName);
             PropertyInfo property = type.GetProperty(url.Property);
             return new PropertyDescriptor(property);
         }
 
-
-        //private PropertyDescriptor LoadProperty(ReferenceParts reference)
-        //{
-        //    Assembly assembly = Load(reference);
-        //    Type type = assembly.GetType(reference.Type);
-        //    PropertyInfo property = type.GetProperty(reference.Property);
-        //    //System.String StringProperty
-        //    return new PropertyDescriptor(property);
-        //}
 
     }
 }

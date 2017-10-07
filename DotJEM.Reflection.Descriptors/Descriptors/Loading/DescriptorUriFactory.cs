@@ -8,8 +8,11 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
     {
         public static string CreateReference(this AssemblyName name)
         {
+            return CreateReference(Assembly.Load(name));
+            
+
             //string path = name.CodeBase.Replace("file:///", "");
-            return $"assembly://{new Uri(name.CodeBase).LocalPath}";
+            //return $"assembly://{new Uri(name.CodeBase).LocalPath}";
         }
 
         public static string CreateReference(this Assembly assembly)
@@ -26,7 +29,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
         {
             // declaringType://e3e508c0-e442-3b15-a686-5f49daf2e138@assembly://F:\OSS\dotJEM Stack\reflection-descriptors\DotJEM.Reflection.Descriptors.Test\bin\Debug\DotJEM.Reflection.Descriptors.Test.DLL
 
-            return $"declaringType://{type.GUID}@{CreateReference(type.Assembly)}";
+            return $"type://{type.FullName}@{CreateReference(type.Assembly)}";
             //return CreateReference(declaringType.Assembly) + "&declaringType=" + declaringType;
         }
 
@@ -39,7 +42,7 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
         public static string CreateReference(this ConstructorInfo constructor)
         {
             return $"constructor://{constructor}@{CreateReference(constructor.DeclaringType)}";
-            //return CreateReference(constructor.DeclaringType) + "&ctor=" + constructor;
+            //return CreateReference(constructor.DeclaringType) + "&constructor=" + constructor;
         }
 
         public static string CreateReference(this PropertyInfo property)
@@ -73,10 +76,14 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
         //}
     }
     public class AssemblyDescriptorUri : DescriptorUri {
-        public string Location { get; }
-        public override DescriptorType Type => DescriptorType.Assembly;
 
-        public AssemblyDescriptorUri(string location)
+        public string Location { get; }
+        
+        public override DescriptorType Type => DescriptorType.Assembly;
+        public override string AssemblyPath => Location;
+
+        public AssemblyDescriptorUri(string value, string location)
+            : base(value)
         {
             Location = location;
         }
@@ -84,170 +91,196 @@ namespace DotJEM.Reflection.Descriptors.Descriptors.Loading
 
     public class TypeDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri assembly;
+        public string TypeName { get; }
+        public DescriptorUri Assembly { get; }
         public override DescriptorType Type => DescriptorType.Type;
+        public override string AssemblyPath => Assembly.AssemblyPath;
 
-        public TypeDescriptorUri(string value, DescriptorUri assembly)
+        public TypeDescriptorUri(string value, string type, DescriptorUri assembly)
+            : base(value)
         {
-            this.value = value;
-            this.assembly = assembly;
+            this.TypeName = type;
+            this.Assembly = assembly;
         }
     }
 
     public class MethodDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri type;
+        public string Method { get; }
+        public DescriptorUri DeclaringType { get; }
         public override DescriptorType Type => DescriptorType.Method;
+        public override string AssemblyPath => DeclaringType.AssemblyPath;
 
-        public MethodDescriptorUri(string value, DescriptorUri type)
+        public MethodDescriptorUri(string value, string method, DescriptorUri declaringType)
+            : base(value)
         {
-            this.value = value;
-            this.type = type;
+            this.Method = method;
+            this.DeclaringType = declaringType;
         }
     }
 
     public class PropertyDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri declaringType;
+        public string Property { get; }
+        public DescriptorUri DeclaringType { get; }
 
         public override DescriptorType Type => DescriptorType.Property;
+        public override string AssemblyPath => DeclaringType.AssemblyPath;
 
-        public PropertyDescriptorUri(string value, DescriptorUri declaringType)
+        public PropertyDescriptorUri(string value, string property, DescriptorUri declaringType)
+            : base(value)
         {
-            this.value = value;
-            this.declaringType = declaringType;
+            this.Property = property;
+            this.DeclaringType = declaringType;
         }
     }
 
     public class ConstructorDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri type;
+        public string Constructor { get; }
+        public DescriptorUri DeclaringType { get; }
         public override DescriptorType Type => DescriptorType.Constructor;
+        public override string AssemblyPath => DeclaringType.AssemblyPath;
 
-        public ConstructorDescriptorUri(string value, DescriptorUri type)
+        public ConstructorDescriptorUri(string value, string constructor, DescriptorUri declaringType)
+            : base(value)
         {
-            this.value = value;
-            this.type = type;
+            this.Constructor = constructor;
+            this.DeclaringType = declaringType;
         }
     }
 
     public class EventDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri type;
+        public string Event { get; }
+        public DescriptorUri DeclaringType { get; }
         public override DescriptorType Type => DescriptorType.Event;
+        public override string AssemblyPath => DeclaringType.AssemblyPath;
 
-        public EventDescriptorUri(string value, DescriptorUri type)
+        public EventDescriptorUri(string value, string @event, DescriptorUri declaringType) 
+            : base(value)
         {
-            this.value = value;
-            this.type = type;
+            this.Event = @event;
+            this.DeclaringType = declaringType;
         }
     }
 
     public class FieldDescriptorUri : DescriptorUri
     {
-        private string value;
-        private DescriptorUri type;
-        public override DescriptorType Type => DescriptorType.Field;
+        public string Field { get; }
+        public DescriptorUri DeclaringType { get; }
 
-        public FieldDescriptorUri(string value, DescriptorUri type)
+        public override DescriptorType Type => DescriptorType.Field;
+        public override string AssemblyPath => DeclaringType.AssemblyPath;
+
+        public FieldDescriptorUri(string value, string field, DescriptorUri declaringType)
+            : base(value)
         {
-            this.value = value;
-            this.type = type;
+            this.Field = field;
+            this.DeclaringType = declaringType;
+        }
+    }
+
+    public class InvalidDescriptorUri : DescriptorUri
+    {
+        public override DescriptorType Type => DescriptorType.Invalid;
+        public override string AssemblyPath => throw new InvalidOperationException("Invalid descriptor encountered.");
+
+        public InvalidDescriptorUri(string value) : base(value)
+        {
         }
     }
 
     public abstract class DescriptorUri
     {
-        public abstract DescriptorType Type { get; }
-        private static readonly Regex pattern = new Regex("(?'declaringType'\\w+)\\:\\/\\/(?'val'[^@]+)(@(?'at'.*))?", 
+        private static readonly Regex pattern = new Regex("(?'type'\\w+)\\:\\/\\/(?'val'[^@]+)(@(?'at'.*))?",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static bool TryParse(string str, out DescriptorUri result)
+        public abstract DescriptorType Type { get; }
+        public string Value { get; }
+        public abstract string AssemblyPath { get; }
+
+        public bool IsValid => Type != DescriptorType.Invalid;
+
+        protected DescriptorUri(string value)
         {
-            result = null;
-            Match match = pattern.Match(str);
+            Value = value;
+        }
+
+        public static implicit operator DescriptorUri(string uri) => Parse(uri);
+
+        public static DescriptorUri Parse(string uri)
+        {
+            Match match = pattern.Match(uri);
             if (!match.Success)
-                return false;
+                return new InvalidDescriptorUri(uri);
 
             bool TryParsePart(out DescriptorUri outpart)
             {
                 outpart = null;
                 string typePart = match.Groups["at"].Value;
-                return !string.IsNullOrEmpty(typePart) && TryParse(typePart, out outpart);
+                if (string.IsNullOrEmpty(typePart))
+                    return false;
+
+                outpart = Parse(typePart);
+                return outpart.IsValid;
             }
 
             DescriptorUri part = null;
-            switch (match.Groups["declaringType"].Value.ToLowerInvariant())
+            switch (match.Groups["type"].Value.ToLowerInvariant())
             {
+                //Assembly
                 case "assembly":
-                    result = new AssemblyDescriptorUri(match.Groups["val"].Value);
-                    return true;
-                case "declaringType":
-                    if (!TryParsePart(out part))
-                        return false;
+                    return new AssemblyDescriptorUri(uri, match.Groups["val"].Value);
 
-                    result = new TypeDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
+                //Type
+                case "type":
+                    if (!TryParsePart(out part))
+                        return new InvalidDescriptorUri(uri);
+
+                    return new TypeDescriptorUri(uri, match.Groups["val"].Value, part);
+
+                //Method
                 case "method":
                     if (!TryParsePart(out part))
-                        return false;
+                        return new InvalidDescriptorUri(uri);
 
-                    result = new MethodDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
+                    return new MethodDescriptorUri(uri, match.Groups["val"].Value, part);
 
-                case "constructor":
-                    if (!TryParsePart(out part))
-                        return false;
-
-                    result = new ConstructorDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
-
+                //Property
                 case "property":
                     if (!TryParsePart(out part))
-                        return false;
+                        return new InvalidDescriptorUri(uri);
 
-                    result = new PropertyDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
+                    return new PropertyDescriptorUri(uri, match.Groups["val"].Value, part);
 
+                //Constructor
+                case "constructor":
+                    if (!TryParsePart(out part))
+                        return new InvalidDescriptorUri(uri);
 
+                    return new ConstructorDescriptorUri(uri, match.Groups["val"].Value, part);
+
+                //Field
                 case "field":
                     if (!TryParsePart(out part))
-                        return false;
+                        return new InvalidDescriptorUri(uri);
 
-                    result = new FieldDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
+                    return new FieldDescriptorUri(uri, match.Groups["val"].Value, part);
 
+                //Event
                 case "event":
                     if (!TryParsePart(out part))
-                        return false;
+                        return new InvalidDescriptorUri(uri);
 
-                    result = new EventDescriptorUri(match.Groups["val"].Value, part);
-                    return true;
+                    return new EventDescriptorUri(uri, match.Groups["val"].Value, part);
             }
-            return false;
+            return new InvalidDescriptorUri(uri);
         }
 
-        public static DescriptorUri Parse(string uri)
-        {
-            if (TryParse(uri, out DescriptorUri result))
-                return result;
 
-            throw new UriFormatException("Invalid descriptor uri format.");
-        }
 
-        //Assembly,
-        //Type,
         //Module,
-        //Method,
-        //Property,
-        //Field,
-        //Event,
-        //Constructor,
         //Attribute,
         //Object,
         //Invalid    
