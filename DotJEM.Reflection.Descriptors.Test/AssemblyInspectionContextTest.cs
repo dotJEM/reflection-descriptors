@@ -55,9 +55,10 @@ namespace Jeme.Reflection.Test
         [Test]
         public void GetTypes_TestDataDll_ReturnsTypeDescriptors()
         {
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly(loadFrom);
 
                 //Note: Descriptor Asserts on AssemblyDescriptors should always check that the parrent assembly is the correct one.
                 //Assert.That(descriptor, Does.Contain.TypeDescriptors(TD.Named("TestData.Class1"), TD.Named("TestData.Class1")));
@@ -78,9 +79,10 @@ namespace Jeme.Reflection.Test
         [Test]
         public void GetCustomAttributes_TestDataDll_ReturnsDynamicAttributeDescriptors()
         {
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext())
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly(loadFrom);
 
                 TypeDescriptor[] types = descriptor.Types;
 
@@ -100,9 +102,10 @@ namespace Jeme.Reflection.Test
         [Test]
         public void GetProperties_TestDataDll_ReturnsPropertyDescriptor()
         {
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext("Data\\"))
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                AssemblyDescriptor descriptor = context.LoadAssembly("Data\\TestData.dll");
+                AssemblyDescriptor descriptor = context.LoadAssembly(loadFrom);
 
                 TypeDescriptor[] types = descriptor.Types;
   
@@ -125,9 +128,10 @@ namespace Jeme.Reflection.Test
         public void GetTypes_TestDataDll_WorksAfterContextDispose()
         {
             AssemblyDescriptor descriptor;
-            using (IAssemblyInspectionContext context = new AssemblyInspectionContext("Data\\"))
+            string loadFrom = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data\\TestData.dll");
+            using (IAssemblyInspectionContext context = new AssemblyInspectionContext(TestContext.CurrentContext.TestDirectory))
             {
-                descriptor = context.LoadAssembly("Data\\TestData.dll");
+                 descriptor = context.LoadAssembly(loadFrom);
             }
 
             TypeDescriptor[] types = descriptor.Types;
